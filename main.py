@@ -1,6 +1,6 @@
 from ai_suggestions import get_ai_suggestions
-from weather import get_open_meteo_weather
-from locations import get_city_info
+from weather import get_open_meteo_weather, get_local_time
+from locations import get_city_info, get_tourist_attractions
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -11,12 +11,16 @@ def travel_info(city):
     city_info = get_city_info(city)
     ai_suggestions = get_ai_suggestions(f"""Best travel recommendations for {city}. 
                                         Provide the output in a structured format, coloured bullets.""")
+    tourist_attractions = get_tourist_attractions(city)
+    local_time_info = get_local_time(city)
 
     response = {
         "city": city,
         "weather": weather,
         "city_info": city_info,
-        "ai_suggestions": ai_suggestions
+        "ai_suggestions": ai_suggestions,
+        "tourist_attractions": tourist_attractions,
+        "local_time_info": local_time_info
     }
     return response
 
@@ -53,5 +57,7 @@ if __name__ == "__main__":
         print(f"City Info: {info['city_info']}")
         print("AI Suggestions:")
         print_colored_suggestions(info['ai_suggestions'])
+        print(f"Tourist Attractions: {info['tourist_attractions']}")
+        print(f"Local Time Info: {info['local_time_info']}")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
