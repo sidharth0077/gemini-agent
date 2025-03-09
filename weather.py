@@ -2,6 +2,8 @@ import requests
 import logging
 import os
 from dotenv import load_dotenv
+import pytz
+from datetime import datetime
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -59,6 +61,31 @@ def get_open_meteo_weather(city, next_days_from_curr_date):
     day_min_temperature = weather_data["daily"]["temperature_2m_min"][next_days_from_curr_date]
     day_max_temperature = weather_data["daily"]["temperature_2m_max"][next_days_from_curr_date]
     return date, day_min_temperature, day_max_temperature
+
+def get_local_time(city):
+    """Fetches the local time and timezone information for a city."""
+    latitude, longitude = get_city_coordinates(city, API_KEY)
+    if latitude is None or longitude is None:
+        return {"error": "Could not fetch coordinates for the city"}
+
+    timezone_url = f"http://api.timezonedb.com/v2.1/get-time-zone?key={os.getenv('TIMEZONEDB_API_KEY')}&format=json&by=position&lat={latitude}&lng={longitude}"
+    try:
+        response = requests.get(timezone_url)
+        response.raise_for_status()
+        data = response.json()
+    except requests.RequestException as e:
+        logging.error(f"Error fetching timezone information: {e}")
+        return {"error": str(e)}
+
+    if data["status"] != "OK":
+        logging.warning(f"Error in timezone data for city: {city}")
+        return {"error": "Could not fetch timezone information"}
+
+    local_time = datetime.now(pytz.timezone(data["zoneName"])).strftime('%Y-%m-%d %H:%M:%S')
+    return {
+        "local_time": local_time,
+        "timezone": data["zoneName"]
+    }
 
 
 
