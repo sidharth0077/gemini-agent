@@ -15,8 +15,8 @@ def get_city_info(city):
         return {"error": str(e)}
 
     if "extract" not in data:
-        logging.warning(f"No information available for city: {city}")
-        return {"error": "No information available"}
+        logging.warning(f"No information available for given city: {city}")
+        return {"error": "No information available for the city"}
 
     return {
         "title": data["title"],
