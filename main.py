@@ -1,9 +1,10 @@
 from ai_suggestions import get_ai_suggestions
 from weather import get_open_meteo_weather, get_local_time
 from locations import get_city_info, get_tourist_attractions
-import logging
+from utils import setup_logging
+import argparse
 
-logging.basicConfig(level=logging.INFO)
+setup_logging()
 
 def travel_info(city):
     next_days_from_curr_date = 2
@@ -49,9 +50,12 @@ def print_colored_suggestions(suggestions):
         print(f"{color}{suggestion}{colors['reset']}")
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Travel Information CLI")
+    parser.add_argument("city", type=str, help="Name of the city")
+    args = parser.parse_args()
+
     try:
-        city = input("Enter the city name: ")
-        info = travel_info(city)
+        info = travel_info(args.city)
         print(f"City: {info['city']}")
         print(f"Weather: {info['weather']}")
         print(f"City Info: {info['city_info']}")

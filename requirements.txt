@@ -1,4 +1,5 @@
 requests
-python-dotenv
 google-genai
 pytz
+requests_cache
+PyYAML

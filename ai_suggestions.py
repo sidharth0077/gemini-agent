@@ -1,12 +1,13 @@
 from google import genai
 import logging
 import os
-from dotenv import load_dotenv
+from utils import load_config
 
-load_dotenv()
+config = load_config()
+
 logging.basicConfig(level=logging.INFO)
 
-client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY", config["google_api_key"]))
 
 def get_ai_suggestions(query):
     try:

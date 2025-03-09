@@ -1,14 +1,13 @@
+import os
 import requests
 import logging
-import os
-from dotenv import load_dotenv
 import pytz
 from datetime import datetime
+from utils import load_config
 
-load_dotenv()
-logging.basicConfig(level=logging.INFO)
+config = load_config()
 
-API_KEY = os.getenv("OPENWEATHER_API_KEY")
+API_KEY = os.getenv("OPENWEATHER_API_KEY", config["openweather_api_key"])
 
 def get_city_coordinates(city_name, api_key):
     """Fetches the geographical coordinates of a city using OpenWeather Geocoding API."""
@@ -68,7 +67,7 @@ def get_local_time(city):
     if latitude is None or longitude is None:
         return {"error": "Could not fetch coordinates for the city"}
 
-    timezone_url = f"http://api.timezonedb.com/v2.1/get-time-zone?key={os.getenv('TIMEZONEDB_API_KEY')}&format=json&by=position&lat={latitude}&lng={longitude}"
+    timezone_url = f"http://api.timezonedb.com/v2.1/get-time-zone?key={config['timezonedb_api_key']}&format=json&by=position&lat={latitude}&lng={longitude}"
     try:
         response = requests.get(timezone_url)
         response.raise_for_status()
